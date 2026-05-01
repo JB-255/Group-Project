@@ -1,0 +1,25 @@
+.cars {
+    text-align: center;
+}
+
+.cars ul {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+}
+
+.cars li {
+    margin-top: 30px;
+    width: 300px;
+    margin-left: 55px;
+    margin-right: 55px;
+    padding: 10px;
+    border: black 1px solid;
+    border-radius: 25px;
+}
+
+.cars img {
+    width: 300px;
+    height: auto;
+    border-radius: 15px;
+}
