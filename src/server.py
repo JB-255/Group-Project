@@ -3,7 +3,7 @@ from flask import Flask, request, render_template, redirect
 
 app = Flask(__name__)
 
-#finds the txt file wherever it may be
+#finds file 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 LOGIN_FILE = os.path.join(BASE_DIR, "loginInfo.txt")
 
@@ -93,39 +93,56 @@ def do_buy(id):
 
 @app.route("/login", methods=["POST"])
 def login():
-    #gets the username and pword from the js
     data = request.get_json()
-    username = data["username"]
-    password = data["password"]
+    login_uname = data["uname"]
+    login_pword = data["pword"]
     login_successful = False
-    f = open(LOGIN_FILE, "r")
-    for line in f:
-        #reads line of file and turns to list
-        line = line.strip()
-        splitted = line.split(",")
-        #sees if the inputted data matches with the file
-        if (splitted[0] == username) and (splitted[1] == password):
+    try:
+        f = open(LOGIN_FILE, "r")
+    except:
+        print("File not found")
+        return "Fail"
+    for l in f:
+        #check file
+        l = l.strip()
+        splitted = l.split(",")
+        if (splitted[0] == login_uname) and (splitted[1] == login_pword):
             login_successful = True 
             break
     f.close()
-    #returns result to js
     if login_successful:
-        return "Success"
+        return "Yay"
     else:
-        return "Fail"
+        return "Nay"
     
 @app.route("/register", methods=["POST"])
 def register():
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-    #turns data into a string and writes to file
-    string = username + "," + password + "\n"
-    f = open(LOGIN_FILE, "a")
-    f.write(string)
-    f.close()
-    return "Registered"
+    repeat = False
+    info = request.get_json()
+    reg_uname = info["uname"]
+    reg_pword = info["pword"]
+    string = reg_uname + "," + reg_pword + "\n"
+    try:
+        f = open(LOGIN_FILE, "r")
+        #check no repeated username
+        for l in f:
+            l = l.strip()
+            splitted = l.split(",")
+            if splitted[0] == reg_uname:
+                repeat = True
+        f.close()
+        if repeat:
+            return "Un"
+        else:
+            try:
+                f = open(LOGIN_FILE, "a")
+                f.write(string)
+                f.close()
+            except:
+                return "Nay"
+        return "Yay"
+    except:
+        return "Nay"
 
-#starts code when file ran
 if __name__ == "__main__":
     app.run(debug=True)
